@@ -1,31 +1,30 @@
+// classic Phong fragment shader
 #version 410
-
 in vec4 vPosition;
 in vec3 vNormal;
 in vec2 vTexCoord;
 
 uniform sampler2D diffuseTexture;
-
-uniform vec3 Ia; // ambient light colour
-uniform vec3 Id; // diffuse light colour
-uniform vec3 Is; // specular light colour
-
-uniform vec3 LightDirection;
-uniform vec3 cameraPosition;
-
 uniform vec3 Ka; // ambient material colour
 uniform vec3 Kd; // diffuse material colour
 uniform vec3 Ks; // specular material colour
-
+uniform float specularPower; // material specular power
+uniform vec3 Ia; // ambient light colour
+uniform vec3 Id; // diffuse light colour
+uniform vec3 Is; // specular light colour
+uniform vec3 LightDirection;
+uniform vec3 cameraPosition;
 uniform float roughness;
 uniform float reflectionCoefficient;
 
 out vec4 FragColour;
 
 void main() {
+
+	// ensure normal and light direction are normalised
 	vec3 N = normalize(vNormal);
 	vec3 L = normalize(LightDirection);
-	vec3 E = normalize(cameraPosition - vPosition.xyz);
+	vec3 E = normalize(cameraPosition - vPosition.xyz);	
 	
 	float NdL = max( 0.0f, dot( N, L ) );
 	float NdE = max( 0.0f, dot( N, E ) );
@@ -46,7 +45,7 @@ void main() {
 	float DX = alpha * beta;
 	
 	// Calculate Oren-Nayar, replaces the Phong Lambertian Term
-	float OrenNayar = NdL * (A + B * CX * DX);
+	float OrenNayar = NdL * (A + B * CX * DX);	
 	
 	// calculate view vector and reflection vector
 	vec3 V = normalize(cameraPosition - vPosition.xyz);
@@ -70,12 +69,11 @@ void main() {
 	float G = min(1, min(X * NdL, X * NdE));
 	
 	// Calculate Cook-Torrance
-	float CookTorrance = max( (D * G * F) / (NdE * pi), 0.0f );
+	float CookTorrance = max( (D*G*F) / (NdE * pi), 0.0f );
 	
 	// calculate each colour property
 	vec3 ambient = Ia * Ka;
 	vec3 diffuse = Id * Kd * OrenNayar;
 	vec3 specular = Is * Ks * CookTorrance;
-	
-	FragColour = vec4(ambient + diffuse, 1) * texture( diffuseTexture, vTexCoord );
+	FragColour = vec4( ambient + diffuse + specular, 1) * texture( diffuseTexture, vTexCoord );
 }

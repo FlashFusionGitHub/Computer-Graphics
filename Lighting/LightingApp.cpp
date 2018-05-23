@@ -108,10 +108,12 @@ void LightingApp::draw() {
 	m_phongShader.bindUniform("roughness", 0.0f);
 
 	//bind reflection coefficient
-	m_phongShader.bindUniform("reflectionCoefficient", 1.0f);
+	m_phongShader.bindUniform("reflectionCoefficient", 0.0f);
+
+	//bind ambient light
+	m_phongShader.bindUniform("Ia", m_ambientLight);
 
 	//bind light
-	m_phongShader.bindUniform("Ia", m_ambientLight);
 	m_phongShader.bindUniform("Id", m_light.diffuse);
 	m_phongShader.bindUniform("Is", m_light.specular);
 	m_phongShader.bindUniform("LightDirection", m_light.direction);
