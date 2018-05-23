@@ -13,12 +13,12 @@ uniform mat4 ProjectionViewModel;
 // We need this matrix to transform the position
 uniform mat4 ModelMatrix;
 
-// We need this matrix to transform the normal
+// we need this matrix to transform the normal
 uniform mat3 NormalMatrix;
 
 void main() {
 	vTexCoord = TexCoord;
 	vPosition = ModelMatrix * Position;
-	vNormal = (ModelMatrix * Normal).xyz;
-    gl_Position = ProjectionViewModel * Position;
+	vNormal = NormalMatrix * Normal.xyz;
+	gl_Position = ProjectionViewModel * Position;
 }

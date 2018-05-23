@@ -106,8 +106,9 @@ void LightingApp::draw() {
 
 	//bind roughness
 	m_phongShader.bindUniform("roughness", 0.0f);
+
 	//bind reflection coefficient
-	m_phongShader.bindUniform("reflectionCoefficient", 0.0f);
+	m_phongShader.bindUniform("reflectionCoefficient", 1.0f);
 
 	//bind light
 	m_phongShader.bindUniform("Ia", m_ambientLight);
