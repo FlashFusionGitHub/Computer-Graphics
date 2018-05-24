@@ -28,10 +28,6 @@ bool LightingApp::startup() {
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
 
-	// create simple camera transforms
-	m_viewMatrix = glm::lookAt(vec3(5), vec3(0, 3, 0), vec3(0, 1, 0));
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, 16.0f / 9.0f, 0.1f, 1000.0f);
-
 	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/phong.vert");
 	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/phong.frag");
 
@@ -46,9 +42,9 @@ bool LightingApp::startup() {
 	}
 
 	m_soulSpearTransform = {
-		2, 0, 0, 0,
-		0, 2, 0, 0,
-		0, 0, 2, 0,
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
 		0, 0, 0, 1 };
 
 	return true;
@@ -65,7 +61,7 @@ void LightingApp::update(float deltaTime) {
 	float time = getTime();
 
 	// rotate light
-	m_light.direction = glm::normalize(glm::vec3(glm::cos(time * 2), 0, glm::sin(time * 2)));
+	m_light.direction = glm::normalize(glm::vec3(glm::cos(time), 0, glm::sin(time)));
 
 	// wipe the gizmos clean for this frame
 	Gizmos::clear();
@@ -81,6 +77,9 @@ void LightingApp::update(float deltaTime) {
 			vec3(-10, 0, -10 + i),
 			i == 10 ? white : black);
 	}
+
+
+	camera.update();
 
 	// add a transform so that we can see the axis
 	Gizmos::addTransform(mat4(1));
@@ -99,7 +98,8 @@ void LightingApp::draw() {
 	clearScreen();
 
 	// update perspective based on screen size
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.0f);
+	m_projectionMatrix = camera.getProjectionMatrix(getWindowWidth(), getWindowHeight());
+	m_viewMatrix = camera.getViewMatrix();
 
 	//bind shader
 	m_phongShader.bind();
@@ -108,7 +108,7 @@ void LightingApp::draw() {
 	m_phongShader.bindUniform("roughness", 0.0f);
 
 	//bind reflection coefficient
-	m_phongShader.bindUniform("reflectionCoefficient", 0.0f);
+	m_phongShader.bindUniform("reflectionCoefficient", 1.0f);
 
 	//bind ambient light
 	m_phongShader.bindUniform("Ia", m_ambientLight);

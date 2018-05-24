@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "OBJMesh.h"
+#include "Camera.h"
 
 #include <glm/mat4x4.hpp>
 
@@ -24,6 +25,9 @@ protected:
 	// camera transforms
 	glm::mat4	m_viewMatrix;
 	glm::mat4	m_projectionMatrix;
+
+	//flying camera
+	Camera camera;
 
 	//aie::OBJMesh m_dragonMesh;
 	//glm::mat4 m_dragonTransform;
