@@ -17,8 +17,6 @@ public:
 	mat4 getProjectionMatrix(float width, float height);
 	mat4 getViewMatrix();
 
-	vec3 getPosition();
-
 private:
 	float m_theta, m_phi;
 	vec3 m_position;

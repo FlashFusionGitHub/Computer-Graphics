@@ -24,9 +24,26 @@ bool RenderingGeometryApp::startup() {
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
 
-	// create simple camera transforms
-	m_viewMatrix = glm::lookAt(vec3(10), vec3(0), vec3(0, 1, 0));
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, 16.0f / 9.0f, 0.1f, 1000.0f);
+	m_shader.loadShader(aie::eShaderStage::VERTEX, "./shaders/simple.vert");
+	m_shader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/simple.frag");
+
+	if (m_shader.link() == false) {
+		printf("Shader Error: %s\n", m_shader.getLastError());
+		return false;
+	}
+
+	if (m_gridTexture.load("./textures/numbered_grid.tga") == false) {
+		printf("Failed to load texture!\n");
+		return false;
+	}
+
+	m_quadMesh.initialiseQuad();
+
+	m_quadTransform = {
+		10, 0, 0, 0,
+		0, 10, 0, 0,
+		0, 0, 10, 0,
+		0, 0, 0, 1 };
 
 	return true;
 }
@@ -56,6 +73,8 @@ void RenderingGeometryApp::update(float deltaTime) {
 	// add a transform so that we can see the axis
 	Gizmos::addTransform(mat4(1));
 
+	camera.update();
+
 	// quit if we press escape
 	aie::Input* input = aie::Input::getInstance();
 
@@ -65,11 +84,29 @@ void RenderingGeometryApp::update(float deltaTime) {
 
 void RenderingGeometryApp::draw() {
 
+
 	// wipe the screen to the background colour
 	clearScreen();
 
 	// update perspective based on screen size
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.0f);
+	m_projectionMatrix = camera.getProjectionMatrix(getWindowWidth(), getWindowHeight());
+	m_viewMatrix = camera.getViewMatrix();
 
+	//bind shader
+	m_shader.bind();
+
+	//bind transform
+	auto pvm = m_projectionMatrix * m_viewMatrix * m_quadTransform;
+	m_shader.bindUniform("ProjectionViewModel", pvm);
+
+	m_gridTexture.bind(0);
+
+	//draw quad
+	m_quadMesh.draw();
+
+	//draw 3D gizmos
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
+
+	//draw 2D gizmos using orthogonal projection matrix
+	Gizmos::draw2D((float)getWindowWidth(), (float)getWindowHeight());
 }

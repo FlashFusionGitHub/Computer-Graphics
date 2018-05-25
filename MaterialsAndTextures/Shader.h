@@ -40,11 +40,7 @@ public:
 	unsigned int getStage() const { return m_stage; }
 	unsigned int getHandle() const { return m_handle; }
 
-	unsigned int getID();
-
 	const char* getLastError() const { return m_lastError; }
-
-	void setMatrix(const char* name, glm::mat4 value);
 
 protected:
 

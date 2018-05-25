@@ -1,9 +1,7 @@
 #include "Shader.h"
-#include "gl_core_4_4.h"
-
 #include <cstdio>
 #include <cassert>
-
+#include "gl_core_4_4.h"
 
 namespace aie {
 
@@ -86,15 +84,6 @@ bool Shader::createShader(unsigned int stage, const char* string) {
 	}
 
 	return true;
-}
-
-unsigned int Shader::getID()
-{
-	return m_handle;
-}
-
-void Shader::setMatrix(const char * name, glm::mat4 value)
-{
 }
 
 ShaderProgram::~ShaderProgram() {
