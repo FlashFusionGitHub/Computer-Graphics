@@ -43,6 +43,7 @@ protected:
 	//glm::mat4 m_dragonTransform;
 
 	aie::OBJMesh m_soulSpearMesh;
+
 	glm::mat4 m_soulSpearTransform;
 	glm::mat4 m_soulSpearTransform2;
 	glm::mat4 m_soulSpearTransform3;

@@ -10,7 +10,7 @@ using glm::mat4;
 class Camera
 {
 public:
-	Camera() : m_theta(0), m_phi(-20), m_position(-10, 40, 0) {}
+	Camera() : m_theta(0), m_phi(-20), m_position(-30, 15, 0) {}
 
 	void update();
 
