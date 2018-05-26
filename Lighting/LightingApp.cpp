@@ -1,6 +1,8 @@
 #include "LightingApp.h"
 #include "Gizmos.h"
 #include "Input.h"
+
+#include <imgui.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -45,7 +47,25 @@ bool LightingApp::startup() {
 		1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
-		0, 0, 0, 1 };
+		2, 0, 2, 1 };
+
+	m_soulSpearTransform2 = {
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		2, 0, -2, 1 };
+
+	m_soulSpearTransform3 = {
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		-2, 0, 2, 1 };
+
+	m_soulSpearTransform4 = {
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		-2, 0, -2, 1 };
 
 	return true;
 }
@@ -78,7 +98,6 @@ void LightingApp::update(float deltaTime) {
 			i == 10 ? white : black);
 	}
 
-
 	camera.update();
 
 	// add a transform so that we can see the axis
@@ -93,7 +112,6 @@ void LightingApp::update(float deltaTime) {
 
 void LightingApp::draw() {
 
-
 	// wipe the screen to the background colour
 	clearScreen();
 
@@ -101,39 +119,47 @@ void LightingApp::draw() {
 	m_projectionMatrix = camera.getProjectionMatrix(getWindowWidth(), getWindowHeight());
 	m_viewMatrix = camera.getViewMatrix();
 
-	//bind shader
-	m_phongShader.bind();
-
-	//bind roughness
-	m_phongShader.bindUniform("roughness", 0.0f);
-
-	//bind reflection coefficient
-	m_phongShader.bindUniform("reflectionCoefficient", 1.0f);
-
-	//bind ambient light
-	m_phongShader.bindUniform("Ia", m_ambientLight);
-
-	//bind light
-	m_phongShader.bindUniform("Id", m_light.diffuse);
-	m_phongShader.bindUniform("Is", m_light.specular);
-	m_phongShader.bindUniform("LightDirection", m_light.direction);
-
-	//bind camera
-	m_phongShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3]));
-
-	//bind transform
-	auto pvm = m_projectionMatrix * m_viewMatrix * m_soulSpearTransform;
-	m_phongShader.bindUniform("ProjectionViewModel", pvm);
-
-	//bind transforms for lighting
-	m_phongShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_soulSpearTransform)));
-
-	//draw soulSpear
-	m_soulSpearMesh.draw();
+	draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform, m_soulSpearMesh);
+	draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform2, m_soulSpearMesh);
+	draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform3, m_soulSpearMesh);
+	draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform4, m_soulSpearMesh);
 
 	//draw 3D gizmos
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 
 	//draw 2D gizmos using orthogonal projection matrix
 	Gizmos::draw2D((float)getWindowWidth(), (float)getWindowHeight());
+}
+
+void LightingApp::draw3DObject(aie::ShaderProgram& phongShader, Light& light, vec3& ambientLight, mat4& projectionMatrix, mat4& viewMatrix, mat4& objectTransform, aie::OBJMesh& objectMesh)
+{
+	//bind shader
+	phongShader.bind();
+
+	//bind roughness
+	phongShader.bindUniform("roughness", 0.0f);
+
+	//bind reflection coefficient
+	phongShader.bindUniform("reflectionCoefficient", 1.0f);
+
+	//bind ambient light
+	phongShader.bindUniform("Ia", ambientLight);
+
+	//bind light
+	phongShader.bindUniform("Id", light.diffuse);
+	phongShader.bindUniform("Is", light.specular);
+	phongShader.bindUniform("LightDirection", light.direction);
+
+	//bind camera
+	phongShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(viewMatrix)[3]));
+
+	//bind transform
+	auto pvm = projectionMatrix * viewMatrix * objectTransform;
+	phongShader.bindUniform("ProjectionViewModel", pvm);
+
+	//bind transforms for lighting
+	phongShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(objectTransform)));
+
+	//draw soulSpear
+	objectMesh.draw();
 }
