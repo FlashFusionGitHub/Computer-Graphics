@@ -51,6 +51,9 @@ protected:
 
 	aie::ShaderProgram m_phongShader;
 
+	float m_reflection;
+	float m_roughness;
+
 	Light m_light;
 	glm::vec3 m_ambientLight;
 };

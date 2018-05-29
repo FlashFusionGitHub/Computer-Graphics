@@ -5,6 +5,7 @@
 #include <imgui.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include <../dependencies/imgui/imgui.h>
 
 using glm::vec3;
 using glm::vec4;
@@ -124,6 +125,12 @@ void LightingApp::draw() {
 	draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform3, m_soulSpearMesh);
 	draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform4, m_soulSpearMesh);
 
+	ImGui::Begin("Lighting");
+	ImGui::SliderFloat("Reflection", &m_reflection, 0.0f, 100.0f);
+	ImGui::SliderFloat("Roughness", &m_roughness, 0, 1.0f);
+	ImGui::End();
+
+
 	//draw 3D gizmos
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 
@@ -137,10 +144,10 @@ void LightingApp::draw3DObject(aie::ShaderProgram& phongShader, Light& light, ve
 	phongShader.bind();
 
 	//bind roughness
-	phongShader.bindUniform("roughness", 0.0f);
+	phongShader.bindUniform("roughness", m_roughness);
 
 	//bind reflection coefficient
-	phongShader.bindUniform("reflectionCoefficient", 1.0f);
+	phongShader.bindUniform("reflectionCoefficient", m_reflection);
 
 	//bind ambient light
 	phongShader.bindUniform("Ia", ambientLight);

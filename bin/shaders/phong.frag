@@ -1,5 +1,6 @@
 // classic Phong fragment shader
 #version 410
+
 in vec4 vPosition;
 in vec3 vNormal;
 in vec2 vTexCoord;
@@ -75,5 +76,6 @@ void main() {
 	vec3 ambient = Ia * Ka;
 	vec3 diffuse = Id * Kd * OrenNayar;
 	vec3 specular = Is * Ks * CookTorrance;
-	FragColour = vec4( ambient + diffuse + specular, 1) * texture( diffuseTexture, vTexCoord );
+	//FragColour = vec4( ambient + diffuse + specular, 1) * texture( diffuseTexture, vTexCoord );
+	FragColour = vec4( ambient + diffuse + specular, 1);
 }
