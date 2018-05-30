@@ -22,10 +22,10 @@ RenderTargetsAndPostProcessingApp::~RenderTargetsAndPostProcessingApp() {
 
 bool RenderTargetsAndPostProcessingApp::startup() {
 	
-	setBackgroundColour(0.25f, 0.25f, 0.25f);
+	setBackgroundColour(1.00f, 1.00f, 1.00f);
 
-	m_light.diffuse = { 1, 1, 0 };
-	m_light.specular = { 1, 1, 0 };
+	m_light.diffuse = { 1, 1, 1 };
+	m_light.specular = { 1, 1, 1 };
 	m_ambientLight = { 0.25f, 0.25f, 0.25f };
 
 	// initialise gizmo primitive counts
@@ -109,8 +109,6 @@ void RenderTargetsAndPostProcessingApp::update(float deltaTime) {
 	// quit if we press escape
 	aie::Input* input = aie::Input::getInstance();
 
-	std::cout << filter << std::endl;
-
 	if (oldFilter != filter) {
 		switch (filter) {
 		case 1:
@@ -132,6 +130,14 @@ void RenderTargetsAndPostProcessingApp::update(float deltaTime) {
 		case 5:
 			m_postShader.loadShader(aie::eShaderStage::FRAGMENT,
 				"./shaders/drawn.frag");
+			break;
+		case 6:
+			m_postShader.loadShader(aie::eShaderStage::FRAGMENT,
+				"./shaders/greyscale.frag");
+			break;
+		case 7:
+			m_postShader.loadShader(aie::eShaderStage::FRAGMENT,
+				"./shaders/sepia.frag");
 			break;
 		default:
 			m_postShader.loadShader(aie::eShaderStage::FRAGMENT,
@@ -179,7 +185,7 @@ void RenderTargetsAndPostProcessingApp::draw() {
 	m_dragonMesh.draw();
 
 	ImGui::Begin("Filters");
-	ImGui::SliderInt("Filter", &filter, 0, 5);
+	ImGui::SliderInt("Filter", &filter, 0, 7);
 	ImGui::End();
 
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
@@ -192,5 +198,6 @@ void RenderTargetsAndPostProcessingApp::draw() {
 	m_postShader.bindUniform("colourTarget", 0);
 	m_renderTarget.getTarget(0).bind(0);
 	// draw fullscreen quad
-	m_fullscreenQuad.draw();
+	m_fullscreenQuad.draw();
+
 }
