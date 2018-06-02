@@ -12,6 +12,8 @@ using glm::vec4;
 using glm::mat4;
 using aie::Gizmos;
 
+const float PI = 3.14159265359f;
+
 RenderTargetsAndPostProcessingApp::RenderTargetsAndPostProcessingApp() {
 
 }
@@ -22,7 +24,7 @@ RenderTargetsAndPostProcessingApp::~RenderTargetsAndPostProcessingApp() {
 
 bool RenderTargetsAndPostProcessingApp::startup() {
 	
-	setBackgroundColour(1.00f, 1.00f, 1.00f);
+	setBackgroundColour(0.25, 0.25f, 0.25f);
 
 	m_light.diffuse = { 1, 1, 1 };
 	m_light.specular = { 1, 1, 1 };
@@ -32,27 +34,32 @@ bool RenderTargetsAndPostProcessingApp::startup() {
 	Gizmos::create(10000, 10000, 10000, 10000);
 
 	// load a phong shader
-	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/phong.vert");
-	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/phong.frag");
+	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/normalmap.vert");
+	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/normalmap.frag");
 
 	if (m_phongShader.link() == false) {
-		printf("Phong Shader Error: %s\n",
-			m_phongShader.getLastError());
+		printf("Phong Shader Error: %s\n", m_phongShader.getLastError());
 		return false;
 	}
 
 	// load an OBJ and assign a scaled transform
-	if (m_dragonMesh.load("./stanford/dragon.obj") == false) {
-		printf("Dragon Mesh Error!\n");
+	if (m_soulSpear.load("./soulspear/soulspear.obj", true, true) == false) {
+		printf("Soul Spear Error!\n");
 		return false;
 	}
 
-	m_dragonTransform = {
-		0.5f,0,0,0,
-		0,0.5f,0,0,
-		0,0,0.5f,0,
-		0,0,0,1
+	m_soulSpearTransform = {
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		0,0,0,1 
 	};
+
+	m_scaleMatrix = m_soulSpearTransform;
+	m_positionMatrix = m_soulSpearTransform;
+	m_rotationXMatrix = m_soulSpearTransform;
+	m_rotationYMatrix = m_soulSpearTransform;
+	m_rotationZMatrix = m_soulSpearTransform;
 
 	if (m_renderTarget.initialise(1, getWindowWidth(),
 		getWindowHeight()) == false) {
@@ -85,6 +92,12 @@ void RenderTargetsAndPostProcessingApp::shutdown() {
 }
 
 void RenderTargetsAndPostProcessingApp::update(float deltaTime) {
+
+	//query time
+	float time = getTime();
+
+	// rotate light
+	//m_light.direction = glm::normalize(glm::vec3(glm::cos(time), 0, glm::sin(time)));
 
 	// wipe the gizmos clean for this frame
 	Gizmos::clear();
@@ -168,25 +181,91 @@ void RenderTargetsAndPostProcessingApp::draw() {
 	clearScreen();
 	// draw scene with a light
 	m_phongShader.bind();
+
+	//bind roughness
+	//m_phongShader.bindUniform("roughness", m_roughness);
+
+	//bind reflection coefficient
+	//m_phongShader.bindUniform("reflectionCoefficient", m_reflection);
+
 	m_phongShader.bindUniform("Ia", m_ambientLight);
 	m_phongShader.bindUniform("Id", m_light.diffuse);
 	m_phongShader.bindUniform("Is", m_light.specular);
 	m_phongShader.bindUniform("LightDirection", m_light.direction);
-	m_phongShader.bindUniform("cameraPosition",
-		vec3(glm::inverse(m_viewMatrix)[3]));
+	m_phongShader.bindUniform("cameraPosition", vec3(glm::inverse(m_viewMatrix)[3]));
 	// bind transform
-	auto pvm = m_projectionMatrix * m_viewMatrix * m_dragonTransform;
+	auto pvm = m_projectionMatrix * m_viewMatrix * m_soulSpearTransform;
 	m_phongShader.bindUniform("ProjectionViewModel", pvm);
+
 	// bind transforms for lighting
-	m_phongShader.bindUniform("ModelMatrix", m_dragonTransform);
-	m_phongShader.bindUniform("NormalMatrix",
-		glm::inverseTranspose(glm::mat3(m_dragonTransform)));
+	m_phongShader.bindUniform("ModelMatrix", m_soulSpearTransform);
+	m_phongShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_soulSpearTransform)));
 	// draw mesh
-	m_dragonMesh.draw();
+	m_soulSpear.draw();
+
+	ImGui::Begin("Lighting");
+	ImGui::SliderFloat("Reflection", &m_reflection, 0.0f, 100.0f);
+	ImGui::SliderFloat("Roughness", &m_roughness, 0, 1.0f);
+	ImGui::End();
 
 	ImGui::Begin("Filters");
 	ImGui::SliderInt("Filter", &filter, 0, 7);
 	ImGui::End();
+
+	ImGui::Begin("Dragon");
+
+	// Position Edit
+	if (ImGui::InputFloat3("Position", m_position)) {
+		m_positionMatrix = {
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			m_position[0], m_position[1], m_position[2], 1,
+		};
+	}
+
+	//Rotation Edit
+	if (ImGui::SliderAngle("Rotation X", &m_rotation[0])) {
+		m_rotationXMatrix = {
+			1, 0, 0, 0,
+			0, cos(m_rotation[0]), -sin(m_rotation[0]), 0,
+			0, sin(m_rotation[0]), cos(m_rotation[0]), 0,
+			0, 0, 0, 1,
+		};
+	}
+
+	if (ImGui::SliderAngle("Rotation Y", &m_rotation[1])) {
+		m_rotationYMatrix = {
+			cos(m_rotation[1]), 0, sin(m_rotation[1]), 0,
+			0, 1, 0, 0,
+			-sin(m_rotation[1]), 0, cos(m_rotation[1]), 0,
+			0, 0, 0, 1,
+		};
+	}
+
+	if (ImGui::SliderAngle("Rotation Z", &m_rotation[2])) {
+		m_rotationZMatrix = {
+			cos(m_rotation[2]), -sin(m_rotation[2]), 0, 0,
+			sin(m_rotation[2]), cos(m_rotation[2]), 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1,
+		};
+	} 
+
+	//Scale Edit
+	if (ImGui::InputFloat3("Scale", m_scale)) {
+		m_scaleMatrix = {
+			m_scale[0], 0, 0, 0,
+			0, m_scale[1], 0, 0,
+			0, 0, m_scale[2], 0,
+			0, 0, 0, 1,
+		};
+	}
+
+	ImGui::End();
+
+	m_soulSpearTransform = m_scaleMatrix * m_positionMatrix
+		* m_rotationXMatrix * m_rotationYMatrix * m_rotationZMatrix;
 
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 	// unbind target to return to backbuffer
@@ -199,5 +278,4 @@ void RenderTargetsAndPostProcessingApp::draw() {
 	m_renderTarget.getTarget(0).bind(0);
 	// draw fullscreen quad
 	m_fullscreenQuad.draw();
-
 }

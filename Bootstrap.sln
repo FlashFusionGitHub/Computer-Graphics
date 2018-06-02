@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bootstrap", "bootstrap\Bootstrap.vcxproj", "{AF59BB0B-E059-4773-83DC-728A949647DA}"
 EndProject
@@ -41,6 +41,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RenderTargetsAndPostProcess
 	ProjectSection(ProjectDependencies) = postProject
 		{AF59BB0B-E059-4773-83DC-728A949647DA} = {AF59BB0B-E059-4773-83DC-728A949647DA}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParticleEffects", "ParticleEffects\ParticleEffects.vcxproj", "{FEBB70AA-58DB-4158-9F56-6A0A0A714B35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -122,6 +124,14 @@ Global
 		{E67D0BFF-3524-4F2E-AEFC-B32B1CF73D3D}.Release|x64.Build.0 = Release|x64
 		{E67D0BFF-3524-4F2E-AEFC-B32B1CF73D3D}.Release|x86.ActiveCfg = Release|Win32
 		{E67D0BFF-3524-4F2E-AEFC-B32B1CF73D3D}.Release|x86.Build.0 = Release|Win32
+		{FEBB70AA-58DB-4158-9F56-6A0A0A714B35}.Debug|x64.ActiveCfg = Debug|x64
+		{FEBB70AA-58DB-4158-9F56-6A0A0A714B35}.Debug|x64.Build.0 = Debug|x64
+		{FEBB70AA-58DB-4158-9F56-6A0A0A714B35}.Debug|x86.ActiveCfg = Debug|Win32
+		{FEBB70AA-58DB-4158-9F56-6A0A0A714B35}.Debug|x86.Build.0 = Debug|Win32
+		{FEBB70AA-58DB-4158-9F56-6A0A0A714B35}.Release|x64.ActiveCfg = Release|x64
+		{FEBB70AA-58DB-4158-9F56-6A0A0A714B35}.Release|x64.Build.0 = Release|x64
+		{FEBB70AA-58DB-4158-9F56-6A0A0A714B35}.Release|x86.ActiveCfg = Release|Win32
+		{FEBB70AA-58DB-4158-9F56-6A0A0A714B35}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

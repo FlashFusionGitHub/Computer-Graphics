@@ -42,8 +42,8 @@ protected:
 	aie::ShaderProgram m_phongShader;
 	aie::ShaderProgram m_postShader;
 
-	aie::OBJMesh m_dragonMesh;
-	glm::mat4 m_dragonTransform;
+	aie::OBJMesh m_soulSpear;
+	glm::mat4 m_soulSpearTransform;
 
 	aie::RenderTarget m_renderTarget;
 
@@ -53,7 +53,22 @@ protected:
 	bool m_sharpen = false;
 	bool m_distort = false;
 
-	int filter;
+	float m_rotation[3] = {0, 0, 0};
+	float m_position[3] = { 0, 0, 0 };
+	float m_scale[3] = {1, 1, 1};
+
+	float m_reflection = 0;
+	float m_roughness = 0;
+
+	mat4 m_rotationXMatrix;
+	mat4 m_rotationYMatrix;
+	mat4 m_rotationZMatrix;
+	mat4 m_scaleMatrix;
+	mat4 m_positionMatrix;
+
+	mat4 newMatrix;
+
+	int filter = 0;
 
 	int oldFilter;
 
