@@ -34,8 +34,8 @@ bool RenderTargetsAndPostProcessingApp::startup() {
 	Gizmos::create(10000, 10000, 10000, 10000);
 
 	// load a phong shader
-	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/normalmap.vert");
-	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/normalmap.frag");
+	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/PBR.vert");
+	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/PBR.frag");
 
 	if (m_phongShader.link() == false) {
 		printf("Phong Shader Error: %s\n", m_phongShader.getLastError());

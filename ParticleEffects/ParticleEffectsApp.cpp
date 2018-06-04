@@ -24,20 +24,26 @@ bool ParticleEffectsApp::startup() {
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
 
-	m_particleShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/simple.vert");
-	m_particleShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/simple.frag");
+	m_particleShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/texturedparticle.vert");
+	m_particleShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/texturedparticle.frag");
 
 	if (m_particleShader.link() == false) {
 		printf("Particle Shader Error: %s\n", m_particleShader.getLastError());
 		return false;
 	}
 
+	if (m_particleTexture.load("./textures/bubble.png") == false) {
+		printf("Failed to load texture!\n");
+		return false;
+	}
+
 	m_emitter = new ParticleEmitter();
-	m_emitter->initalise(1000, 500,
-		0.1f, 1.0f,
-		1, 5,
-		1, 0.1f,
-		glm::vec4(1, 0, 0, 1), glm::vec4(0, 0, 0, 1), true);
+
+	m_emitter->initalise(250, 80,
+		2.5f, 5.0f,
+		1, 9,
+		0.1f, 6.0f,
+		glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1), false, true);
 
 	m_particleTransform = {
 		1,0,0,0,
@@ -99,7 +105,12 @@ void ParticleEffectsApp::draw() {
 	// bind particle transform
 	auto pvm = m_projectionMatrix * m_viewMatrix * m_particleTransform;
 	m_particleShader.bindUniform("ProjectionViewModel", pvm);
-	m_emitter->draw();
+
+	m_particleTexture.bind(0);
+	m_particleShader.bindUniform("diffuseTexture", 0);
 
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
+
+	// draw transparency last
+	m_emitter->draw();
 }

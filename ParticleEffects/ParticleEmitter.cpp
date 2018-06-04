@@ -25,10 +25,11 @@ void ParticleEmitter::initalise(unsigned int a_maxParticles,
 	float a_lifetimeMin, float a_lifetimeMax,
 	float a_velocityMin, float a_velocityMax,
 	float a_startSize, float a_endSize,
-	const vec4& a_startColour, const vec4& a_endColour, bool applyGravity) {
+	const vec4& a_startColour, const vec4& a_endColour, bool a_applyGravity, bool a_isTransparent) {
 	// set up emit timers
 	m_emitTimer = 0;
 	m_emitRate = 1.0f / a_emitRate;
+
 	// store all variables passed in
 	m_startColour = a_startColour;
 	m_endColour = a_endColour;
@@ -39,14 +40,18 @@ void ParticleEmitter::initalise(unsigned int a_maxParticles,
 	m_lifespanMin = a_lifetimeMin;
 	m_lifespanMax = a_lifetimeMax;
 	m_maxParticles = a_maxParticles;
-	m_applyGravity = applyGravity;
+	m_applyGravity = a_applyGravity;
+	m_isTransparent = a_isTransparent;
+
 	// create particle array
 	m_particles = new Particle[m_maxParticles];
 	m_firstDead = 0;
+
 	// create the array of vertices for the particles
 	// 4 vertices per particle for a quad.
 	// will be filled during update
 	m_vertexData = new ParticleVertex[m_maxParticles * 4];
+
 	// create the index buffeer data for the particles
 	// 6 indices per quad of 2 triangles
 	// fill it now as it never changes
@@ -59,6 +64,7 @@ void ParticleEmitter::initalise(unsigned int a_maxParticles,
 		indexData[i * 6 + 4] = i * 4 + 2;
 		indexData[i * 6 + 5] = i * 4 + 3;
 	}
+
 	// create opengl buffers
 	glGenVertexArrays(1, &m_vao);
 	glBindVertexArray(m_vao);
@@ -73,14 +79,17 @@ void ParticleEmitter::initalise(unsigned int a_maxParticles,
 		sizeof(unsigned int), indexData, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0); // position
 	glEnableVertexAttribArray(1); // colour
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,
-		sizeof(ParticleVertex), 0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE,
-		sizeof(ParticleVertex), ((char*)0) + 16);
+	glEnableVertexAttribArray(2); // texCoord
+
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(ParticleVertex), 0);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(ParticleVertex), ((char*)0) + 16);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(ParticleVertex), (void*)32);
+
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	delete[] indexData;
+
 }
 
 void ParticleEmitter::emit() {
@@ -137,22 +146,29 @@ void ParticleEmitter::update(float a_deltaTime,
 			// size particle
 			particle->size = glm::mix(m_startSize, m_endSize,
 				particle->lifetime / particle->lifespan);
+
 			// colour particle
 			particle->colour = glm::mix(m_startColour, m_endColour,
 				particle->lifetime / particle->lifespan);
+
 			float halfSize = particle->size * 0.5f;
-			m_vertexData[quad * 4 + 0].position = vec4(halfSize,
-				halfSize, 0, 1);
+
+			m_vertexData[quad * 4 + 0].position = vec4(halfSize, halfSize, 0, 1);
 			m_vertexData[quad * 4 + 0].colour = particle->colour;
-			m_vertexData[quad * 4 + 1].position = vec4(-halfSize,
-				halfSize, 0, 1);
+			m_vertexData[quad * 4 + 0].texCoord = { 1, 1 };
+
+			m_vertexData[quad * 4 + 1].position = vec4(-halfSize, halfSize, 0, 1);
 			m_vertexData[quad * 4 + 1].colour = particle->colour;
-			m_vertexData[quad * 4 + 2].position = vec4(-halfSize,
-				-halfSize, 0, 1);
+			m_vertexData[quad * 4 + 1].texCoord = { 0, 1 };
+
+			m_vertexData[quad * 4 + 2].position = vec4(-halfSize, -halfSize, 0, 1);
 			m_vertexData[quad * 4 + 2].colour = particle->colour;
-			m_vertexData[quad * 4 + 3].position = vec4(halfSize,
-				-halfSize, 0, 1);
+			m_vertexData[quad * 4 + 2].texCoord = { 0, 0 };
+
+			m_vertexData[quad * 4 + 3].position = vec4(halfSize, -halfSize, 0, 1);
 			m_vertexData[quad * 4 + 3].colour = particle->colour;
+			m_vertexData[quad * 4 + 3].texCoord = { 1, 0 };
+
 			// create billboard transform
 			vec3 zAxis = glm::normalize(vec3(a_cameraTransform[3]) -
 				particle->position);
@@ -174,6 +190,7 @@ void ParticleEmitter::update(float a_deltaTime,
 			m_vertexData[quad * 4 + 3].position = billboard *
 				m_vertexData[quad * 4 + 3].position +
 				vec4(particle->position, 0);
+
 			++quad;
 		}
 	}
@@ -183,9 +200,17 @@ void ParticleEmitter::draw() {
 	// sync the particle vertex buffer
 	// based on how many alive particles there are
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, m_firstDead * 4 *
-		sizeof(ParticleVertex), m_vertexData);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, m_firstDead * 4 * sizeof(ParticleVertex), m_vertexData);
+
 	// draw particles
 	glBindVertexArray(m_vao);
-	glDrawElements(GL_TRIANGLES, m_firstDead * 6, GL_UNSIGNED_INT, 0);
+
+	if (m_isTransparent) {
+		glDepthMask(false);
+		glDrawElements(GL_TRIANGLES, m_firstDead * 6, GL_UNSIGNED_INT, 0);
+		glDepthMask(true);
+	}
+	else {
+		glDrawElements(GL_TRIANGLES, m_firstDead * 6, GL_UNSIGNED_INT, 0);
+	}
 }

@@ -3,9 +3,12 @@
 
 in vec4 vPosition;
 in vec4 vColour;
+in vec2 vTexCoord;
+
+uniform sampler2D diffuseTexture;
 
 out vec4 FragColour;
 
 void main() {
-	FragColour = vColour;
+	FragColour = texture( diffuseTexture, vTexCoord);
 }

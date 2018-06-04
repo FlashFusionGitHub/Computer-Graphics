@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "OBJMesh.h"
 #include <glm/mat4x4.hpp>
+#include <Texture.h>
 
 class ParticleEffectsApp : public aie::Application {
 public:
@@ -29,6 +30,7 @@ protected:
 	Camera m_camera;
 
 	aie::ShaderProgram m_particleShader;
+	aie::Texture m_particleTexture;
 	glm::mat4 m_particleTransform;
 	ParticleEmitter* m_emitter;
 };

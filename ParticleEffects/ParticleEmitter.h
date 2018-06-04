@@ -1,5 +1,8 @@
+#include "shader.h"
+
 #include <glm/glm.hpp>
 
+using glm::vec2;
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
@@ -17,6 +20,7 @@ struct Particle {
 struct ParticleVertex {
 	vec4 position;
 	vec4 colour;
+	vec2 texCoord;
 };
 
 class ParticleEmitter {
@@ -29,7 +33,7 @@ public:
 		float a_lifetimeMin, float a_lifetimeMax,
 		float a_velocityMin, float a_velocityMax,
 		float a_startSize, float a_endSize,
-		const vec4& a_startColour, const vec4& a_endColour, bool applyGravity);
+		const vec4& a_startColour, const vec4& a_endColour, bool a_applyGravity, bool a_isTransparent);
 
 	void emit();
 	void update(float a_deltaTime, const mat4& a_cameraTransform);
@@ -56,10 +60,9 @@ protected:
 	float m_endSize;
 
 	bool m_applyGravity;
+	bool m_isTransparent;
 
 	vec4 m_startColour;
 	vec4 m_endColour;
-
-
 };
 
