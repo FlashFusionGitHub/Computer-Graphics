@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "RenderTarget.h"
 
+#include <Texture.h>
 #include <glm/mat4x4.hpp>
 
 class Light {
@@ -14,6 +15,18 @@ public:
 	glm::vec3 direction;
 	glm::vec3 diffuse;
 	glm::vec3 specular;
+};
+
+class MultiLights {
+public:
+	union {
+		glm::mat3 light;
+		glm::vec3 lightAttributes[3];
+
+		//[0] direction
+		//[1] diffuse
+		//[2] specular
+	};
 };
 
 class RenderTargetsAndPostProcessingApp : public aie::Application {
@@ -37,13 +50,20 @@ protected:
 	Camera m_camera;
 
 	glm::vec3 m_ambientLight;
-	Light m_light;
+
+	glm::mat3 m_lights[2];
+
+	MultiLights m_light1;
+	MultiLights m_light2;
+
 
 	aie::ShaderProgram m_phongShader;
+
 	aie::ShaderProgram m_postShader;
 
 	aie::OBJMesh m_soulSpear;
 	glm::mat4 m_soulSpearTransform;
+	aie::Texture m_soulSpearTexture;
 
 	aie::RenderTarget m_renderTarget;
 

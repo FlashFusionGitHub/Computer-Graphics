@@ -6,15 +6,24 @@ in vec3 vNormal;
 in vec2 vTexCoord;
 
 uniform sampler2D diffuseTexture;
+
 uniform vec3 Ka; // ambient material colour
 uniform vec3 Kd; // diffuse material colour
 uniform vec3 Ks; // specular material colour
+
 uniform float specularPower; // material specular power
-uniform vec3 Ia; // ambient light colour
+
+uniform vec3 Ia; // ambient light colour;
+
 uniform vec3 Id; // diffuse light colour
 uniform vec3 Is; // specular light colour
-uniform vec3 LightDirection;
+
+uniform mat3 Lights[2];
+
+uniform vec3 lightDirection;
+
 uniform vec3 cameraPosition;
+
 uniform float roughness;
 uniform float reflectionCoefficient;
 
@@ -24,7 +33,7 @@ void main() {
 
 	// ensure normal and light direction are normalised
 	vec3 N = normalize(vNormal);
-	vec3 L = normalize(LightDirection);
+	vec3 L = normalize(lightDirection);
 	vec3 E = normalize(cameraPosition - vPosition.xyz);	
 	
 	float NdL = max( 0.0f, dot( N, L ) );
@@ -32,8 +41,8 @@ void main() {
 	float R2 = roughness * roughness;
 	
 	// Oren-Nayar Diffuse Term
-	float A = 1.0f - 0.5f * R2 / (R2 + 0.33f);
-	float B = 0.45f * R2 / (R2 + 0.09f);
+	float AX = 1.0f - 0.5f * R2 / (R2 + 0.33f);
+	float BX = 0.45f * R2 / (R2 + 0.09f);
 	
 	// CX = Max(0, cos(l,e))
 	vec3 lightProjected = normalize( L - N * NdL );
@@ -46,7 +55,7 @@ void main() {
 	float DX = alpha * beta;
 	
 	// Calculate Oren-Nayar, replaces the Phong Lambertian Term
-	float OrenNayar = NdL * (A + B * CX * DX);	
+	float OrenNayar = NdL * (AX + BX * CX * DX);	
 	
 	// calculate view vector and reflection vector
 	vec3 V = normalize(cameraPosition - vPosition.xyz);
@@ -77,5 +86,4 @@ void main() {
 	vec3 diffuse = Id * Kd * OrenNayar;
 	vec3 specular = Is * Ks * CookTorrance;
 	FragColour = vec4( ambient + diffuse + specular, 1) * texture( diffuseTexture, vTexCoord );
-	//FragColour = vec4( ambient + diffuse + specular, 1);
 }

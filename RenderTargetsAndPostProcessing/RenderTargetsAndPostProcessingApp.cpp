@@ -26,16 +26,20 @@ bool RenderTargetsAndPostProcessingApp::startup() {
 	
 	setBackgroundColour(0.25, 0.25f, 0.25f);
 
-	m_light.diffuse = { 1, 1, 1 };
-	m_light.specular = { 1, 1, 1 };
+	m_light1.lightAttributes[1] = { 0, 1, 0 };
+	m_light1.lightAttributes[2] = { 0, 1, 0 };
+
+	m_light2.lightAttributes[1] = { 1, 0, 1 };
+	m_light2.lightAttributes[2] = { 1, 0, 1 };
+
 	m_ambientLight = { 0.25f, 0.25f, 0.25f };
 
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
 
 	// load a phong shader
-	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/PBR.vert");
-	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/PBR.frag");
+	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/normalmap.vert");
+	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/normalmap.frag");
 
 	if (m_phongShader.link() == false) {
 		printf("Phong Shader Error: %s\n", m_phongShader.getLastError());
@@ -97,7 +101,14 @@ void RenderTargetsAndPostProcessingApp::update(float deltaTime) {
 	float time = getTime();
 
 	// rotate light
-	//m_light.direction = glm::normalize(glm::vec3(glm::cos(time), 0, glm::sin(time)));
+	m_light1.lightAttributes[0] = glm::normalize(glm::vec3(glm::cos(time), 0, glm::sin(time)));
+
+	// rotate light
+	m_light2.lightAttributes[0] = glm::normalize(glm::vec3(glm::sin(time), glm::cos(time), 0));
+
+
+	m_lights[0] = m_light1.light;
+	m_lights[1] = m_light2.light;
 
 	// wipe the gizmos clean for this frame
 	Gizmos::clear();
@@ -181,17 +192,11 @@ void RenderTargetsAndPostProcessingApp::draw() {
 	clearScreen();
 	// draw scene with a light
 	m_phongShader.bind();
-
-	//bind roughness
-	//m_phongShader.bindUniform("roughness", m_roughness);
-
-	//bind reflection coefficient
-	//m_phongShader.bindUniform("reflectionCoefficient", m_reflection);
-
+;
 	m_phongShader.bindUniform("Ia", m_ambientLight);
-	m_phongShader.bindUniform("Id", m_light.diffuse);
-	m_phongShader.bindUniform("Is", m_light.specular);
-	m_phongShader.bindUniform("LightDirection", m_light.direction);
+
+	m_phongShader.bindUniform("lights", 2, m_lights);
+
 	m_phongShader.bindUniform("cameraPosition", vec3(glm::inverse(m_viewMatrix)[3]));
 	// bind transform
 	auto pvm = m_projectionMatrix * m_viewMatrix * m_soulSpearTransform;
@@ -200,6 +205,10 @@ void RenderTargetsAndPostProcessingApp::draw() {
 	// bind transforms for lighting
 	m_phongShader.bindUniform("ModelMatrix", m_soulSpearTransform);
 	m_phongShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_soulSpearTransform)));
+
+	// bind roughness and reflection
+	m_phongShader.bindUniform("roughness", m_roughness);
+	m_phongShader.bindUniform("reflectionCoefficient", m_reflection);
 	// draw mesh
 	m_soulSpear.draw();
 
@@ -272,10 +281,12 @@ void RenderTargetsAndPostProcessingApp::draw() {
 	m_renderTarget.unbind();
 	// clear the backbuffer
 	clearScreen();
+
 	// bind post shader and textures
 	m_postShader.bind();
 	m_postShader.bindUniform("colourTarget", 0);
 	m_renderTarget.getTarget(0).bind(0);
+
 	// draw fullscreen quad
 	m_fullscreenQuad.draw();
 }
