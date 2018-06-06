@@ -26,11 +26,11 @@ bool RenderTargetsAndPostProcessingApp::startup() {
 	
 	setBackgroundColour(0.25, 0.25f, 0.25f);
 
-	m_light1.lightAttributes[1] = { 0, 1, 0 };
-	m_light1.lightAttributes[2] = { 0, 1, 0 };
+	m_light1.lightAttributes[1] = { 1, 1, 1 };
+	m_light1.lightAttributes[2] = { 1, 1, 1 };
 
-	m_light2.lightAttributes[1] = { 1, 0, 1 };
-	m_light2.lightAttributes[2] = { 1, 0, 1 };
+	m_light2.lightAttributes[1] = { 1, 1, 1 };
+	m_light2.lightAttributes[2] = { 1, 1, 1 };
 
 	m_ambientLight = { 0.25f, 0.25f, 0.25f };
 
@@ -188,11 +188,12 @@ void RenderTargetsAndPostProcessingApp::draw() {
 
 	// bind our render target
 	m_renderTarget.bind();
+
 	// wipe the screen to the background colour
 	clearScreen();
 	// draw scene with a light
 	m_phongShader.bind();
-;
+
 	m_phongShader.bindUniform("Ia", m_ambientLight);
 
 	m_phongShader.bindUniform("lights", 2, m_lights);
@@ -279,6 +280,7 @@ void RenderTargetsAndPostProcessingApp::draw() {
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 	// unbind target to return to backbuffer
 	m_renderTarget.unbind();
+
 	// clear the backbuffer
 	clearScreen();
 

@@ -24,10 +24,6 @@ bool AssignmentApp::startup() {
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
 
-	// create simple camera transforms
-	m_viewMatrix = glm::lookAt(vec3(10), vec3(0), vec3(0, 1, 0));
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, 16.0f / 9.0f, 0.1f, 1000.0f);
-
 	return true;
 }
 
@@ -40,6 +36,8 @@ void AssignmentApp::update(float deltaTime) {
 
 	// wipe the gizmos clean for this frame
 	Gizmos::clear();
+
+	m_camera.update(deltaTime);
 
 	// draw a simple grid with gizmos
 	vec4 white(1);
@@ -68,8 +66,11 @@ void AssignmentApp::draw() {
 	// wipe the screen to the background colour
 	clearScreen();
 
-	// update perspective based on screen size
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.0f);
+	// update perspective based on camera projection matrix
+	m_projectionMatrix = m_camera.getProjectionMatrix(getWindowWidth(), getWindowHeight());
+	// update view matrix based on camera view matrix
+	m_viewMatrix = m_camera.getViewMatrix();
+
 
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 }

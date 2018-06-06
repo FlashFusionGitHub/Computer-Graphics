@@ -32,7 +32,7 @@ bool ParticleEffectsApp::startup() {
 		return false;
 	}
 
-	if (m_particleTexture.load("./textures/bubble.png") == false) {
+	if (m_particleTexture.load("./textures/smoke.png") == false) {
 		printf("Failed to load texture!\n");
 		return false;
 	}
