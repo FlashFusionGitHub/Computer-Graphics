@@ -78,7 +78,7 @@ void main() {
 		// calculate view vector and reflection vector
 		vec3 V = normalize(cameraPosition - vPosition.xyz);
 		vec3 R = reflect( L, N );
-		vec3 H = (L + E) / 2;
+		vec3 H = (L + V) / 2;
 	
 		float NdH = max( 0.0f, dot( N, H ) );
 		float NdH2 = NdH * NdH;
@@ -93,7 +93,7 @@ void main() {
 		float F = reflectionCoefficient + (1 - reflectionCoefficient) * pow( 1 - NdE, 5 );
 	
 		// Geometric Attenuation Factor G
-		float X = 2.0f * NdH / dot( E, H );
+		float X = 2.0f * NdH / dot( V, H );
 		float G = min(1, min(X * NdL, X * NdE));
 	
 		// Calculate Cook-Torrance

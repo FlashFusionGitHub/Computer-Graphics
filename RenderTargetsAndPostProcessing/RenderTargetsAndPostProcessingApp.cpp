@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <../dependencies/imgui/imgui.h>
-#include <iostream>
+
 
 using glm::vec3;
 using glm::vec4;
@@ -47,7 +47,7 @@ bool RenderTargetsAndPostProcessingApp::startup() {
 	}
 
 	// load an OBJ and assign a scaled transform
-	if (m_soulSpear.load("./soulspear/soulspear.obj", true, true) == false) {
+	if (m_soulSpear.load("./barrel/tut_storage_lp.obj", true, true) == false) {
 		printf("Soul Spear Error!\n");
 		return false;
 	}
@@ -102,7 +102,6 @@ void RenderTargetsAndPostProcessingApp::update(float deltaTime) {
 
 	// rotate light
 	m_light1.lightAttributes[0] = glm::normalize(glm::vec3(glm::cos(time), 0, glm::sin(time)));
-
 	// rotate light
 	m_light2.lightAttributes[0] = glm::normalize(glm::vec3(glm::sin(time), glm::cos(time), 0));
 
@@ -191,6 +190,7 @@ void RenderTargetsAndPostProcessingApp::draw() {
 
 	// wipe the screen to the background colour
 	clearScreen();
+
 	// draw scene with a light
 	m_phongShader.bind();
 
@@ -207,9 +207,10 @@ void RenderTargetsAndPostProcessingApp::draw() {
 	m_phongShader.bindUniform("ModelMatrix", m_soulSpearTransform);
 	m_phongShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_soulSpearTransform)));
 
-	// bind roughness and reflection
+
 	m_phongShader.bindUniform("roughness", m_roughness);
 	m_phongShader.bindUniform("reflectionCoefficient", m_reflection);
+
 	// draw mesh
 	m_soulSpear.draw();
 
@@ -278,6 +279,7 @@ void RenderTargetsAndPostProcessingApp::draw() {
 		* m_rotationXMatrix * m_rotationYMatrix * m_rotationZMatrix;
 
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
+
 	// unbind target to return to backbuffer
 	m_renderTarget.unbind();
 

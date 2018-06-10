@@ -86,7 +86,7 @@ protected:
 	mat4 m_scaleMatrix;
 	mat4 m_positionMatrix;
 
-	mat4 newMatrix;
+	//mat4 newMatrix;
 
 	int filter = 0;
 
