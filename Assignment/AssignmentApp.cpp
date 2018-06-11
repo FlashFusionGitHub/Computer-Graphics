@@ -33,16 +33,17 @@ bool AssignmentApp::startup() {
 
 	m_ambientLight = { 0.25f, 0.25f, 0.25f };
 
-	// initialise gizmo primitive counts
-	Gizmos::create(10000, 10000, 10000, 10000);
-
+	// load a phong shader
 	m_normalMap.loadShader(aie::eShaderStage::VERTEX, "./shaders/normalmap.vert");
 	m_normalMap.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/normalmap.frag");
 
 	if (m_normalMap.link() == false) {
-		printf("Normal map Shader Error: %s\n", m_normalMap.getLastError());
+		printf("Shader Error: %s\n", m_normalMap.getLastError());
 		return false;
 	}
+
+	// initialise gizmo primitive counts
+	Gizmos::create(10000, 10000, 10000, 10000);
 
 	m_soulSpear.Load("soulspear\\soulspear.obj", "SoulSpear", glm::vec3(2, 2, 2), glm::vec3(0, 0, 0));
 	m_axe.Load("axe\\Hatchet.obj", "Hatchet", glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(100, 0, 0));
@@ -109,11 +110,11 @@ void AssignmentApp::draw() {
 	m_viewMatrix = m_camera.getViewMatrix();
 
 	// draw Objects
-	m_soulSpear.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights[0], m_lights[1]);
-	m_axe.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights[0], m_lights[1]);
-	m_barrel.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights[0], m_lights[1]);
-	m_skull.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights[0], m_lights[1]);
-	m_chest.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights[0], m_lights[1]);
+	m_soulSpear.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights);
+	m_axe.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights);
+	m_barrel.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights);
+	m_skull.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights);
+	m_chest.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights);
 
 	// draw 3D gizmos
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);

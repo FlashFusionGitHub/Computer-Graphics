@@ -4,7 +4,7 @@
 #include <gl_core_4_4.h>
 #include <iostream>
 
-bool Model::Load(const char* filename, const char* name, glm::vec3 scale, glm::vec3 position)
+bool Model::Load(const char* objectFileName, const char* name, glm::vec3 scale, glm::vec3 position)
 {
 	for (int i = 0; i < 3; i++) {
 		m_scale[i] = scale[i];
@@ -14,7 +14,7 @@ bool Model::Load(const char* filename, const char* name, glm::vec3 scale, glm::v
 	m_name = name;
 
 	// load an OBJ and assign a scaled transform
-	if (m_object.load(filename, true, true) == false) {
+	if (m_object.load(objectFileName, true, true) == false) {
 		printf("Object Error!\n");
 		return false;
 	}
@@ -45,22 +45,19 @@ bool Model::Load(const char* filename, const char* name, glm::vec3 scale, glm::v
 	return true;
 }
 
-void Model::Draw(aie::ShaderProgram& shader, glm::mat4& projectionMatrix, glm::mat4& viewMatrix, glm::vec3& ambientLight, glm::mat3 light, glm::mat3 light2)
+void Model::Draw(aie::ShaderProgram& shader, glm::mat4& projectionView, glm::mat4& viewMatrix, glm::vec3 ambientLight, glm::mat3* lights)
 {
-
-	m_lights[0] = light;
-	m_lights[1] = light2;
-
 	// draw scene with a light
 	shader.bind();
 
 	shader.bindUniform("Ia", ambientLight);
 
-	shader.bindUniform("lights", 2, m_lights);
+	shader.bindUniform("lights", 2, lights);
 
 	shader.bindUniform("cameraPosition", glm::vec3(glm::inverse(viewMatrix)[3]));
+
 	// bind transform
-	auto pvm = projectionMatrix * viewMatrix * m_objectTransform;
+	auto pvm = projectionView * viewMatrix * m_objectTransform;
 	shader.bindUniform("ProjectionViewModel", pvm);
 
 	// bind transforms for lighting

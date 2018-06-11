@@ -25,19 +25,19 @@ public:
 protected:
 
 	// camera transforms
-	glm::mat4	m_viewMatrix;
-	glm::mat4	m_projectionMatrix;
+	glm::mat4 m_viewMatrix;
+	glm::mat4 m_projectionMatrix;
 
 	// Camera in scene
 	Camera m_camera;
+
+	aie::ShaderProgram m_normalMap;
 
 	Model m_soulSpear;
 	Model m_axe;
 	Model m_barrel;
 	Model m_skull;
 	Model m_chest;
-
-	aie::ShaderProgram m_normalMap;
 
 	glm::vec3 m_ambientLight;
 

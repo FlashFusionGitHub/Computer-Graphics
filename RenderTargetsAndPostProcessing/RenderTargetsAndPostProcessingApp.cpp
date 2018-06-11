@@ -26,10 +26,10 @@ bool RenderTargetsAndPostProcessingApp::startup() {
 	
 	setBackgroundColour(0.25, 0.25f, 0.25f);
 
-	m_light1.lightAttributes[1] = { 1, 1, 1 };
+	m_light1.lightAttributes[1] = { 0, 0, 1 };
 	m_light1.lightAttributes[2] = { 1, 1, 1 };
 
-	m_light2.lightAttributes[1] = { 1, 1, 1 };
+	m_light2.lightAttributes[1] = { 1, 0, 1 };
 	m_light2.lightAttributes[2] = { 1, 1, 1 };
 
 	m_ambientLight = { 0.25f, 0.25f, 0.25f };
@@ -47,7 +47,7 @@ bool RenderTargetsAndPostProcessingApp::startup() {
 	}
 
 	// load an OBJ and assign a scaled transform
-	if (m_soulSpear.load("./barrel/tut_storage_lp.obj", true, true) == false) {
+	if (m_soulSpear.load("./skull/skull.obj", true, true) == false) {
 		printf("Soul Spear Error!\n");
 		return false;
 	}
@@ -206,7 +206,6 @@ void RenderTargetsAndPostProcessingApp::draw() {
 	// bind transforms for lighting
 	m_phongShader.bindUniform("ModelMatrix", m_soulSpearTransform);
 	m_phongShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_soulSpearTransform)));
-
 
 	m_phongShader.bindUniform("roughness", m_roughness);
 	m_phongShader.bindUniform("reflectionCoefficient", m_reflection);
