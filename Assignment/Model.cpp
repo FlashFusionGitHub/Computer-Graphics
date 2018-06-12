@@ -4,20 +4,21 @@
 #include <gl_core_4_4.h>
 #include <iostream>
 
-bool Model::Load(const char* objectFileName, const char* name, glm::vec3 scale, glm::vec3 position)
+
+bool Model::Load(const char* objectFileName, const char* name, glm::vec3& scale, glm::vec3& position)
 {
+	// load an OBJ and assign a scaled transform
+	if (m_object.load(objectFileName, true, true) == false) {
+		printf("Object Error!\n");
+		return false;
+	}
+
 	for (int i = 0; i < 3; i++) {
 		m_scale[i] = scale[i];
 		m_position[i] = position[i];
 	}
 
 	m_name = name;
-
-	// load an OBJ and assign a scaled transform
-	if (m_object.load(objectFileName, true, true) == false) {
-		printf("Object Error!\n");
-		return false;
-	}
 
 	m_scaleMatrix = m_objectTransform;
 	m_positionMatrix = m_objectTransform;
@@ -45,7 +46,7 @@ bool Model::Load(const char* objectFileName, const char* name, glm::vec3 scale, 
 	return true;
 }
 
-void Model::Draw(aie::ShaderProgram& shader, glm::mat4& projectionView, glm::mat4& viewMatrix, glm::vec3 ambientLight, glm::mat3* lights)
+void Model::Draw(aie::ShaderProgram& shader, glm::mat4& projectionView, glm::mat4& viewMatrix, glm::vec3& ambientLight, glm::mat3* lights)
 {
 	// draw scene with a light
 	shader.bind();

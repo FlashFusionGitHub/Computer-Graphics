@@ -191,27 +191,49 @@ void RenderTargetsAndPostProcessingApp::draw() {
 	// wipe the screen to the background colour
 	clearScreen();
 
+	loadObject(m_phongShader, m_soulSpear, "Skull", m_soulSpearTransform, m_ambientLight, m_lights, m_viewMatrix, m_projectionMatrix);
+
+	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
+
+	// unbind target to return to backbuffer
+	m_renderTarget.unbind();
+
+	// clear the backbuffer
+	clearScreen();
+
+	// bind post shader and textures
+	m_postShader.bind();
+	m_postShader.bindUniform("colourTarget", 0);
+	m_renderTarget.getTarget(0).bind(0);
+
+	// draw fullscreen quad
+	m_fullscreenQuad.draw();
+}
+
+void RenderTargetsAndPostProcessingApp::loadObject(aie::ShaderProgram & shader, aie::OBJMesh& object, const char * name, glm::mat4& objectTransform,
+	glm::vec3& ambientLight, glm::mat3 * lights, glm::mat4& viewMatrix, glm::mat4& projectionMatrix)
+{
 	// draw scene with a light
-	m_phongShader.bind();
+	shader.bind();
 
-	m_phongShader.bindUniform("Ia", m_ambientLight);
+	shader.bindUniform("Ia", ambientLight);
 
-	m_phongShader.bindUniform("lights", 2, m_lights);
+	shader.bindUniform("lights", 2, lights);
 
-	m_phongShader.bindUniform("cameraPosition", vec3(glm::inverse(m_viewMatrix)[3]));
+	shader.bindUniform("cameraPosition", vec3(glm::inverse(viewMatrix)[3]));
 	// bind transform
-	auto pvm = m_projectionMatrix * m_viewMatrix * m_soulSpearTransform;
-	m_phongShader.bindUniform("ProjectionViewModel", pvm);
+	auto pvm = projectionMatrix * viewMatrix * objectTransform;
+	shader.bindUniform("ProjectionViewModel", pvm);
 
 	// bind transforms for lighting
-	m_phongShader.bindUniform("ModelMatrix", m_soulSpearTransform);
-	m_phongShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_soulSpearTransform)));
+	shader.bindUniform("ModelMatrix", objectTransform);
+	shader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(objectTransform)));
 
-	m_phongShader.bindUniform("roughness", m_roughness);
-	m_phongShader.bindUniform("reflectionCoefficient", m_reflection);
+	shader.bindUniform("roughness", m_roughness);
+	shader.bindUniform("reflectionCoefficient", m_reflection);
 
 	// draw mesh
-	m_soulSpear.draw();
+	object.draw();
 
 	ImGui::Begin("Lighting");
 	ImGui::SliderFloat("Reflection", &m_reflection, 0.0f, 100.0f);
@@ -260,7 +282,7 @@ void RenderTargetsAndPostProcessingApp::draw() {
 			0, 0, 1, 0,
 			0, 0, 0, 1,
 		};
-	} 
+	}
 
 	//Scale Edit
 	if (ImGui::InputFloat3("Scale", m_scale)) {
@@ -274,22 +296,6 @@ void RenderTargetsAndPostProcessingApp::draw() {
 
 	ImGui::End();
 
-	m_soulSpearTransform = m_scaleMatrix * m_positionMatrix
+	objectTransform = m_scaleMatrix * m_positionMatrix
 		* m_rotationXMatrix * m_rotationYMatrix * m_rotationZMatrix;
-
-	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
-
-	// unbind target to return to backbuffer
-	m_renderTarget.unbind();
-
-	// clear the backbuffer
-	clearScreen();
-
-	// bind post shader and textures
-	m_postShader.bind();
-	m_postShader.bindUniform("colourTarget", 0);
-	m_renderTarget.getTarget(0).bind(0);
-
-	// draw fullscreen quad
-	m_fullscreenQuad.draw();
 }

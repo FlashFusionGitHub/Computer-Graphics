@@ -171,7 +171,6 @@
     <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
-    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -183,7 +182,6 @@
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="RenderTarget.h" />
-    <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>

@@ -41,6 +41,9 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
+	void loadObject(aie::ShaderProgram& shader, aie::OBJMesh& object, const char* name, glm::mat4& objectTransform,
+		glm::vec3& ambientLight, glm::mat3* lights, glm::mat4& viewMatrix, glm::mat4& projectionMatrix);
+
 protected:
 
 	// camera transforms

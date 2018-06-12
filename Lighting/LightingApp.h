@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "OBJMesh.h"
 #include "Camera.h"
+#include "m.h"
 
 #include <glm/mat4x4.hpp>
 
@@ -32,6 +33,9 @@ public:
 
 protected:
 
+
+	m m_soulSpear;
+	m m_skull;
 	// camera transforms
 	glm::mat4	m_viewMatrix;
 	glm::mat4	m_projectionMatrix;
@@ -43,6 +47,7 @@ protected:
 	//glm::mat4 m_dragonTransform;
 
 	aie::OBJMesh m_soulSpearMesh;
+    aie::OBJMesh m_skullSpearMesh;
 
 	glm::mat4 m_soulSpearTransform;
 	glm::mat4 m_soulSpearTransform2;

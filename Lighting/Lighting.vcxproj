@@ -167,6 +167,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="LightingApp.cpp" />
+    <ClCompile Include="m.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="LightingApp.h" />
+    <ClInclude Include="m.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="OBJMesh.h" />

@@ -31,8 +31,8 @@ bool LightingApp::startup() {
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
 
-	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/phong.vert");
-	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/phong.frag");
+	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/PBR.vert");
+	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/PBR.frag");
 
 	if (m_phongShader.link() == false) {
 		printf("Shader Error: %s\n", m_phongShader.getLastError());
@@ -40,6 +40,11 @@ bool LightingApp::startup() {
 	}
 
 	if (m_soulSpearMesh.load("./soulspear/soulspear.obj", true, true) == false) {
+		printf("Soulspear mesh error!\n");
+		return false;
+	}
+
+	if (m_skullSpearMesh.load("./skull/skull.obj", true, true) == false) {
 		printf("Soulspear mesh error!\n");
 		return false;
 	}
@@ -120,10 +125,30 @@ void LightingApp::draw() {
 	m_projectionMatrix = camera.getProjectionMatrix(getWindowWidth(), getWindowHeight());
 	m_viewMatrix = camera.getViewMatrix();
 
-	draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform, m_soulSpearMesh);
-	draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform2, m_soulSpearMesh);
-	draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform3, m_soulSpearMesh);
-	draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform4, m_soulSpearMesh);
+	//bind shader
+	m_phongShader.bind();
+
+	//bind roughness
+	m_phongShader.bindUniform("roughness", m_roughness);
+
+	//bind reflection coefficient
+	m_phongShader.bindUniform("reflectionCoefficient", m_reflection);
+
+	//bind ambient light
+	m_phongShader.bindUniform("Ia", m_ambientLight);
+
+	//bind light
+	m_phongShader.bindUniform("Id", m_light.diffuse);
+	m_phongShader.bindUniform("Is", m_light.specular);
+	m_phongShader.bindUniform("lightDirection", m_light.direction);
+
+	m_soulSpear.load(m_phongShader, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform, m_soulSpearMesh);
+	m_skull.load(m_phongShader, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform2, m_skullSpearMesh);
+
+	//draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform, m_soulSpearMesh);
+	//draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform2, m_skullSpearMesh);
+	//draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform3, m_soulSpearMesh);
+	//draw3DObject(m_phongShader, m_light, m_ambientLight, m_projectionMatrix, m_viewMatrix, m_soulSpearTransform4, m_soulSpearMesh);
 
 	ImGui::Begin("Lighting");
 	ImGui::SliderFloat("Reflection", &m_reflection, 0.0f, 100.0f);
@@ -155,7 +180,7 @@ void LightingApp::draw3DObject(aie::ShaderProgram& phongShader, Light& light, ve
 	//bind light
 	phongShader.bindUniform("Id", light.diffuse);
 	phongShader.bindUniform("Is", light.specular);
-	phongShader.bindUniform("LightDirection", light.direction);
+	phongShader.bindUniform("lightDirection", light.direction);
 
 	//bind camera
 	phongShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(viewMatrix)[3]));
