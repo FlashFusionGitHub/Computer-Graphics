@@ -5,8 +5,11 @@
 #include <iostream>
 
 
-bool Model::Load(const char* objectFileName, const char* name, glm::vec3& scale, glm::vec3& position)
+bool Model::Load(aie::OBJMesh& object, const char* objectFileName, const char* name, glm::vec3& scale, glm::vec3& position)
 {
+
+	m_object = object;
+
 	// load an OBJ and assign a scaled transform
 	if (m_object.load(objectFileName, true, true) == false) {
 		printf("Object Error!\n");

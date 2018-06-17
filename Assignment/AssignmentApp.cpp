@@ -45,11 +45,11 @@ bool AssignmentApp::startup() {
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
 
-	m_soulSpear.Load("soulspear\\soulspear.obj", "SoulSpear", glm::vec3(2, 2, 2), glm::vec3(0, 0, 0));
-	m_axe.Load("axe\\Hatchet.obj", "Hatchet", glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(100, 0, 0));
-	m_barrel.Load("barrel\\tut_storage_lp.obj", "Barrel", glm::vec3(1, 1, 1), glm::vec3(0, -0.3f, -10));
-	m_skull.Load("skull\\skull.obj", "Skull", glm::vec3(1, 1, 1), glm::vec3(0, 3.2f, 10));
-	m_chest.Load("chest\\treasure_chest.obj", "Chest", glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(-100, 45, 0));
+	m_soulSpear.Load(m_soulSpearMesh, "./soulspear/soulspear.obj", "SoulSpear", glm::vec3(2, 2, 2), glm::vec3(0, 0, 0));
+	m_axe.Load(m_axeMesh, "./axe/Hatchet.obj", "Hatchet", glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(100, 0, 0));
+	m_barrel.Load(m_barrelMesh, "./barrel/tut_storage_lp.obj", "Barrel", glm::vec3(1, 1, 1), glm::vec3(0, -0.3f, -10));
+	m_skull.Load(m_skullMesh, "./skull/skull.obj", "Skull", glm::vec3(1, 1, 1), glm::vec3(0, 3.2f, 10));
+	m_chest.Load(m_chestMesh, "./chest/treasure_chest.obj", "Chest", glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(-110.0f, 30, 0));
 
 	return true;
 }

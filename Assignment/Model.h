@@ -12,7 +12,7 @@ class Model
 {
 public:
 
-	bool Load(const char* objectFileName, const char* name, glm::vec3& scale, glm::vec3& position);
+	bool Load(aie::OBJMesh& object, const char* objectFileName, const char* name, glm::vec3& scale, glm::vec3& position);
 	void Draw(aie::ShaderProgram& shader, glm::mat4& projectionView, glm::mat4& viewMatrix, glm::vec3& ambientLight, glm::mat3* lights);
 
 protected:

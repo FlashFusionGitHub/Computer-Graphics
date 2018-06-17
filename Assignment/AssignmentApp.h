@@ -33,6 +33,12 @@ protected:
 
 	aie::ShaderProgram m_normalMap;
 
+	aie::OBJMesh m_soulSpearMesh;
+	aie::OBJMesh m_axeMesh;
+	aie::OBJMesh m_barrelMesh;
+	aie::OBJMesh m_skullMesh;
+	aie::OBJMesh m_chestMesh;
+
 	Model m_soulSpear;
 	Model m_axe;
 	Model m_barrel;
