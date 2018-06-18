@@ -25,13 +25,13 @@ bool AssignmentApp::startup() {
 	
 	setBackgroundColour(0.25f, 0.25f, 0.25f);
 
-	m_light1.lightAttributes[1] = { 1, 1, 1 };
-	m_light1.lightAttributes[2] = { 1, 1, 1 };
+	m_light1.lightAttributes[1] = glm::vec3(lightOneDiffuse[0], lightOneDiffuse[1], lightOneDiffuse[2]);
+	m_light1.lightAttributes[2] = glm::vec3(lightOneSpecular[0], lightOneSpecular[1], lightOneSpecular[2]);
 
-	m_light2.lightAttributes[1] = { 1, 1, 1 };
-	m_light2.lightAttributes[2] = { 1, 1, 1 };
+	m_light2.lightAttributes[1] = glm::vec3(lightTwoDiffuse[0], lightTwoDiffuse[1], lightTwoDiffuse[2]);
+	m_light2.lightAttributes[2] = glm::vec3(lightTwoSpecular[0], lightTwoSpecular[1], lightTwoSpecular[2]);
 
-	m_ambientLight = { 0.20f, 0.20f, 0.20f };
+	m_ambientLight = glm::vec3(ambientLight[0], ambientLight[1], ambientLight[2]);
 
 	// load a phong shader
 	m_normalMap.loadShader(aie::eShaderStage::VERTEX, "./shaders/normalmap.vert");
@@ -65,9 +65,9 @@ void AssignmentApp::update(float deltaTime) {
 	float time = getTime();
 
 	// rotate light
-	m_light1.lightAttributes[0] = glm::normalize(glm::vec3(glm::cos(time), 0, glm::sin(time)));
+	m_light1.lightAttributes[0] = glm::vec3(lightOneDirection[0], lightOneDirection[1], lightOneDirection[3]);
 	// rotate light
-	m_light2.lightAttributes[0] = glm::normalize(glm::vec3(glm::sin(time), glm::cos(time), 0));
+	m_light2.lightAttributes[0] = glm::vec3(lightTwoDirection[0], lightTwoDirection[1], lightTwoDirection[3]);
 
 	m_lights[0] = m_light1.light;
 	m_lights[1] = m_light2.light;
@@ -108,6 +108,52 @@ void AssignmentApp::draw() {
 	m_projectionMatrix = m_camera.getProjectionMatrix(getWindowWidth(), getWindowHeight());
 	// update view matrix based on camera view matrix
 	m_viewMatrix = m_camera.getViewMatrix();
+
+	ImGui::Begin("Lights");
+
+	if (ImGui::InputFloat3("Light 1 Direction", lightOneDirection)) {
+		m_light1.lightAttributes[0][0] = lightOneDirection[0];
+		m_light1.lightAttributes[0][1] = lightOneDirection[1];
+		m_light1.lightAttributes[0][2] = lightOneDirection[2];
+	}
+
+	if (ImGui::ColorEdit3("Light 1 Diffuse", lightOneDiffuse)) {
+		m_light1.lightAttributes[1][0] = lightOneDiffuse[0];
+		m_light1.lightAttributes[1][1] = lightOneDiffuse[1];
+		m_light1.lightAttributes[1][2] = lightOneDiffuse[2];
+	}
+
+	if (ImGui::InputFloat3("Light 1 Specular", lightOneSpecular)) {
+		m_light1.lightAttributes[2][0] = lightOneSpecular[0];
+		m_light1.lightAttributes[2][1] = lightOneSpecular[1];
+		m_light1.lightAttributes[2][2] = lightOneSpecular[2];
+	}
+
+	if (ImGui::InputFloat3("Light 2 Direction", lightTwoDirection)) {
+		m_light2.lightAttributes[0][0] = lightOneDirection[0];
+		m_light2.lightAttributes[0][1] = lightOneDirection[1];
+		m_light2.lightAttributes[0][2] = lightOneDirection[2];
+	}
+
+	if (ImGui::ColorEdit3("Light 2 Diffuse", lightTwoDiffuse)) {
+		m_light2.lightAttributes[1][0] = lightTwoDiffuse[0];
+		m_light2.lightAttributes[1][1] = lightTwoDiffuse[1];
+		m_light2.lightAttributes[1][2] = lightTwoDiffuse[2];
+	}
+
+	if (ImGui::InputFloat3("Light 2 Specular", lightTwoSpecular)) {
+		m_light2.lightAttributes[2][0] = lightTwoSpecular[0];
+		m_light2.lightAttributes[2][1] = lightTwoSpecular[1];
+		m_light2.lightAttributes[2][2] = lightTwoSpecular[2];
+	}
+
+	if (ImGui::ColorEdit3("Ambient Light", ambientLight)) {
+		m_ambientLight.x = ambientLight[0];
+		m_ambientLight.y = ambientLight[1];
+		m_ambientLight.z = ambientLight[2];
+	}
+
+	ImGui::End();
 
 	// draw Objects
 	m_soulSpear.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights);

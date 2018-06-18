@@ -62,4 +62,15 @@ protected:
 
 	MultiLights m_light1;
 	MultiLights m_light2;
+
+
+	float ambientLight[3] = { 0.20f, 0.20f, 0.20f };
+
+	float lightOneDirection[3] = { 1, 1, 1 };
+	float lightOneDiffuse[3] = { 1, 1, 1 };
+	float lightOneSpecular[3] = { 1, 1, 1 };
+
+	float lightTwoDirection[3] = { 1, 1, 1 };
+	float lightTwoDiffuse[3] = { 1, 1, 1 };
+	float lightTwoSpecular[3] = { 1, 1, 1 };
 };

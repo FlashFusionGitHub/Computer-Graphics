@@ -24,9 +24,9 @@ bool LightingApp::startup() {
 
 	setBackgroundColour(0.25f, 0.25f, 0.25f);
 
-	m_light.diffuse = { 1, 1, 0 };
-	m_light.specular = { 1, 1, 0 };
-	m_ambientLight = { 0.25f, 0.25f, 0.25f };
+	m_light.diffuse = { 1, 1, 1 };
+	m_light.specular = { 1, 1, 1 };
+	m_ambientLight = { 1.0f, 1.0f, 1.0f };
 
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);

@@ -26,13 +26,13 @@ bool RenderTargetsAndPostProcessingApp::startup() {
 	
 	setBackgroundColour(0.25, 0.25f, 0.25f);
 
-	m_light1.lightAttributes[1] = { 0, 0, 1 };
+	m_light1.lightAttributes[1] = { 1, 1, 1 };
 	m_light1.lightAttributes[2] = { 1, 1, 1 };
 
-	m_light2.lightAttributes[1] = { 1, 0, 1 };
+	m_light2.lightAttributes[1] = { 1, 1, 1 };
 	m_light2.lightAttributes[2] = { 1, 1, 1 };
 
-	m_ambientLight = { 0.25f, 0.25f, 0.25f };
+	m_ambientLight = { 0.0f, 0.0f, 0.0f };
 
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
