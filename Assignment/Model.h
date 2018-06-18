@@ -41,6 +41,6 @@ private:
 	glm::mat4 m_scaleMatrix;
 	glm::mat4 m_positionMatrix;
 
-	float m_reflection = 50.0f;
-	float m_roughness = 0.5f;
+	float m_reflection = 20.0f;
+	float m_roughness = 0.0f;
 };

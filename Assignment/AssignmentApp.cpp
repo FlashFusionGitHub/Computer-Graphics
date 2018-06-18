@@ -31,7 +31,7 @@ bool AssignmentApp::startup() {
 	m_light2.lightAttributes[1] = { 1, 1, 1 };
 	m_light2.lightAttributes[2] = { 1, 1, 1 };
 
-	m_ambientLight = { 0.25f, 0.25f, 0.25f };
+	m_ambientLight = { 0.20f, 0.20f, 0.20f };
 
 	// load a phong shader
 	m_normalMap.loadShader(aie::eShaderStage::VERTEX, "./shaders/normalmap.vert");
@@ -48,8 +48,8 @@ bool AssignmentApp::startup() {
 	m_soulSpear.Load(m_soulSpearMesh, "./soulspear/soulspear.obj", "SoulSpear", glm::vec3(2, 2, 2), glm::vec3(0, 0, 0));
 	m_axe.Load(m_axeMesh, "./axe/Hatchet.obj", "Hatchet", glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(100, 0, 0));
 	m_barrel.Load(m_barrelMesh, "./barrel/tut_storage_lp.obj", "Barrel", glm::vec3(1, 1, 1), glm::vec3(0, -0.3f, -10));
+	m_chest.Load(m_chestMesh, "./heart/Heart.obj", "Chest", glm::vec3(50, 50, 50), glm::vec3(-0.2f, 0, 0));
 	m_skull.Load(m_skullMesh, "./skull/skull.obj", "Skull", glm::vec3(1, 1, 1), glm::vec3(0, 3.2f, 10));
-	m_chest.Load(m_chestMesh, "./chest/treasure_chest.obj", "Chest", glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(-110.0f, 30, 0));
 
 	return true;
 }
@@ -113,8 +113,8 @@ void AssignmentApp::draw() {
 	m_soulSpear.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights);
 	m_axe.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights);
 	m_barrel.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights);
-	m_skull.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights);
 	m_chest.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights);
+	m_skull.Draw(m_normalMap, m_projectionMatrix, m_viewMatrix, m_ambientLight, m_lights);
 
 	// draw 3D gizmos
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
